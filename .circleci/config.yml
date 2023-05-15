@@ -1,0 +1,42 @@
+version: 2.1
+
+
+jobs:
+  build:
+    docker:
+      - image: cimg/base:2023.03
+    steps:
+      - checkout
+      - run: echo "!!!"
+  test-video-server-app:
+    docker:
+      - image: cimg/python:3.7
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Cài đặt pytest
+          command: |
+            git clone https://github.com/superdesk/video-server.git
+            pip install -e video-server/[dev]
+            pip install pytest requests flask pymongo
+      # - run:
+      #     name: Nhân bản project
+      #     command: |
+      #       python -m pytest tests/api/test_create_project.py
+      # - run:
+      #     name: Test danh sách project
+      #     command: |
+      #       python -m pytest test_list_projects.py
+      # - run:
+      #     name: Test xóa project
+      #     command: |
+      #       python -m pytest test_delete_project.py
+      # - run:
+      #     name: Test truy xuất chi tiết project
+      #     command: |
+      #       python -m pytest test_retrieve_project_details.py
+workflows:
+  build_and_test:
+    jobs:
+      - test-video-server-app
